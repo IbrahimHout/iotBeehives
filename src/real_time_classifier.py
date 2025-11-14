@@ -38,20 +38,21 @@ except Exception as e:
 
 # --- SMS Alert Function ---
 def send_sms_alert(message):
-    """
-    Sends an SMS alert if the cooldown period has passed.
-    """
-    global last_alert_time
-    current_time = time.time()
+    print("This is alert ( here replace with send_sms_alert).")
+    # """
+    # Sends an SMS alert if the cooldown period has passed.
+    # """
+    # global last_alert_time
+    # current_time = time.time()
     
-    if current_time - last_alert_time > ALERT_COOLDOWN:
-        try:
-            client = freesms.Client(FREESMS_USER, FREESMS_PASS)
-            client.send(message)
-            last_alert_time = current_time
-            print("SMS alert sent successfully.")
-        except Exception as e:
-            print(f"Error sending SMS alert: {e}")
+    # if current_time - last_alert_time > ALERT_COOLDOWN:
+    #     try:
+    #         client = freesms.Client(FREESMS_USER, FREESMS_PASS)
+    #         client.send(message)
+    #         last_alert_time = current_time
+    #         print("SMS alert sent successfully.")
+    #     except Exception as e:
+    #         print(f"Error sending SMS alert: {e}")
 
 # --- Audio Recording and Classification ---
 def classify_audio_stream():

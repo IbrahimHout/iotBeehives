@@ -37,13 +37,32 @@ def load_and_preprocess_data():
                     mel_spec = librosa.feature.melspectrogram(y=audio, sr=SAMPLE_RATE, n_mels=N_MELS)
                     mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
                     
-                    # Append features and labels
+                    # Append features and labels (keep as variable-length for now)
                     features.append(mel_spec_db)
                     labels.append(1 if label_type == 'QueenBee Present' else 0)
                 except Exception as e:
                     print(f"Error processing {filepath}: {e}")
 
-    return np.array(features), np.array(labels)
+    # At this point, "features" is a list of 2D arrays with potentially different
+    # time dimensions (number of columns). We need to make them the same shape
+    # so that np.array(features) produces a proper 3D tensor instead of an
+    # inhomogeneous object array.
+    if not features:
+        return None, None
+
+    # Determine the maximum time length among all spectrograms
+    max_time_length = max(f.shape[1] for f in features)
+
+    # Initialize a zero-padded array: (num_samples, n_mels, max_time_length)
+    padded_features = np.zeros((len(features), N_MELS, max_time_length), dtype=np.float32)
+
+    for i, f in enumerate(features):
+        # If some spectrograms are shorter, they will be zero-padded at the end.
+        # If any are longer (shouldn't really happen with fixed DURATION), truncate.
+        time_len = min(f.shape[1], max_time_length)
+        padded_features[i, :, :time_len] = f[:, :time_len]
+
+    return padded_features, np.array(labels)
 
 # --- Model Definition ---
 def build_model(input_shape):
