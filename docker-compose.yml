@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  beehive-app:
+    build: .
+    container_name: beehive-app
+    restart: always
+    devices:
+      - /dev/snd:/dev/snd
+    environment:
+      - INFLUXDB_HOST=influxdb
+    depends_on:
+      - influxdb
+
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    restart: always
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=beehive
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - influxdb
+
+volumes:
+  influxdb_data:
+  grafana_data:

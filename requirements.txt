@@ -1,0 +1,8 @@
+tensorflow
+librosa
+pyaudio
+influxdb
+grafana-api
+freesms
+jupyter
+kaggle
